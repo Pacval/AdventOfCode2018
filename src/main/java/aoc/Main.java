@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            Day2.exo1();
+            Day2.exo2();
         } catch (Exception e) {
             System.out.println(e);
         }
