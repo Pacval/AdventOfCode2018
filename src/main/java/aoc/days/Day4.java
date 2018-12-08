@@ -44,6 +44,15 @@ public class Day4 {
         }
     }
 
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    private static class MaxSleptShiftByGuard {
+        private int idGuard;
+        private int minute;
+        private Long nbNights;
+    }
+
     public static void exo1() throws IOException, ParseException {
 
         String[] entries = ExoEntryUtils.getEntries(4, 1);
@@ -109,7 +118,73 @@ public class Day4 {
         System.out.println(idGuardMostSleeping * minMoreSlept);
     }
 
-    public static void exo2() throws IOException {
+    public static void exo2() throws IOException, ParseException {
 
+        String[] entries = ExoEntryUtils.getEntries(4, 1);
+
+        List<Line> lines = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        for (String entry : entries) {
+            lines.add(new Line(
+                    sdf.parse(entry.substring(1, 17)),
+                    entry.substring(entry.indexOf("] ") + 2)
+            ));
+        }
+
+        List<Shift> shifts = new ArrayList<>();
+        Shift shift = new Shift();
+        int minStartSleeping = 0;
+        Calendar cal = Calendar.getInstance();
+        for (Line line : lines.stream().sorted(Comparator.comparing(Line::getDate)).collect(Collectors.toList())) {
+            if (line.getSentence().split(" ")[0].equals("Guard")) {
+                // nouveau garde
+                shift = new Shift(Integer.parseInt(line.getSentence().split(" ")[1].substring(1)));
+                shifts.add(shift);
+                minStartSleeping = 0; // 0 = nouveau garde
+
+            } else if (line.getSentence().split(" ")[0].equals("wakes")) {
+                // On se réveille
+                cal.setTime(line.getDate());
+                // On ajoute toutes les minutes endormies
+                for (int i = minStartSleeping; i < cal.get(Calendar.MINUTE); i++) {
+                    shift.addAsleep(i);
+                }
+                minStartSleeping = -1; // -1 = garde réveillé
+
+            } else if (line.getSentence().split(" ")[0].equals("falls")) {
+                // On s'endort
+                cal.setTime(line.getDate());
+                minStartSleeping = cal.get(Calendar.MINUTE);
+            }
+        }
+
+        // filtrer par id garde
+        Map<Integer, List<Shift>> groupedShift = shifts.stream().collect(Collectors.groupingBy(Shift::getIdGuard));
+
+        List<MaxSleptShiftByGuard> maxSleptShiftByGuards = new ArrayList<>();
+
+        for (Map.Entry<Integer, List<Shift>> shiftPersos : groupedShift.entrySet()) {
+            Map<Integer, Long> toto = shiftPersos.getValue().stream()
+                    .flatMap(item -> item.getMinAsleep().stream())
+                    .collect(Collectors.groupingBy(item -> item, Collectors.counting()));
+
+            if (!toto.isEmpty()) {
+                Map.Entry<Integer, Long> minMoreSlept = Collections.max(toto.entrySet(), Map.Entry.comparingByValue());
+                MaxSleptShiftByGuard maxSleptShiftByGuard = new MaxSleptShiftByGuard(
+                        shiftPersos.getKey(),
+                        minMoreSlept.getKey(),
+                        minMoreSlept.getValue()
+                );
+                maxSleptShiftByGuards.add(maxSleptShiftByGuard);
+            }
+        }
+
+        MaxSleptShiftByGuard result = Collections.max(maxSleptShiftByGuards, Comparator.comparing(MaxSleptShiftByGuard::getNbNights));
+
+        System.out.println("id " + result.getIdGuard());
+        System.out.println("minute " + result.getMinute());
+        System.out.println("nb nights " + result.getNbNights());
+
+        System.out.println("result = " + result.getIdGuard() * result.getMinute());
     }
 }
