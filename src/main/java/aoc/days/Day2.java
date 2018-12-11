@@ -21,10 +21,10 @@ public class Day2 {
                     code.toLowerCase().split("")).collect(
                     Collectors.groupingBy(c -> c, Collectors.counting()));
 
-            if (frequentChars.containsValue(2l)) {
+            if (frequentChars.containsValue(2L)) {
                 code2occurence++;
             }
-            if (frequentChars.containsValue(3l)) {
+            if (frequentChars.containsValue(3L)) {
                 code3occurence++;
             }
         }
