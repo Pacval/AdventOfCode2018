@@ -110,5 +110,32 @@ public class Day6 {
 
         String[] entries = ExoEntryUtils.getEntries(6, 1);
 
+        List<Point> definedPoints = new ArrayList<>();
+        for (String entry : entries) {
+            definedPoints.add(new Point(Integer.parseInt(entry.substring(0, entry.indexOf(","))),
+                    Integer.parseInt(entry.substring(entry.indexOf(",") + 2))));
+        }
+
+        // On calcule les positions min et max des points
+        Integer xMin = definedPoints.stream().map(Point::getX).min(Comparator.naturalOrder()).get();
+        Integer xMax = definedPoints.stream().map(Point::getX).max(Comparator.naturalOrder()).get();
+        Integer yMin = definedPoints.stream().map(Point::getY).min(Comparator.naturalOrder()).get();
+        Integer yMax = definedPoints.stream().map(Point::getY).max(Comparator.naturalOrder()).get();
+
+        int nbOfPointsEnoughClose = 0;
+
+        for (int i = xMin; i <= xMax; i++) {
+            for (int j = yMin; j <= yMax; j++) {
+                Point newPoint = new Point(i, j);
+                int totalDistance = 0;
+                for(Point definedPoint : definedPoints) {
+                    totalDistance += Math.abs(newPoint.getX() - definedPoint.getX()) + Math.abs(newPoint.getY() - definedPoint.getY());
+                }
+                if(totalDistance < 10000) {
+                    nbOfPointsEnoughClose++;
+                }
+            }
+        }
+        System.out.println("Numbers of points that have a total distance to all given coordinates of less than 10000 : " + nbOfPointsEnoughClose);
     }
 }
