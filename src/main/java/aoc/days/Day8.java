@@ -16,13 +16,25 @@ public class Day8 {
         List<Node> children;
         List<Integer> metadatas;
 
-        public Node() {
+        Node() {
             this.children = new ArrayList<>();
             this.metadatas = new ArrayList<>();
         }
 
-        public int getTotalMetadatas() {
+        int getTotalMetadatas() {
             return metadatas.stream().mapToInt(foo -> foo).sum() + children.stream().mapToInt(Node::getTotalMetadatas).sum();
+        }
+
+        int getValueOfNode() {
+            if (this.children.isEmpty()) {
+                return this.metadatas.stream().mapToInt(foo -> foo).sum();
+            } else {
+                int sum = 0;
+                for (Integer metadata : this.metadatas) {
+                    sum += this.children.size() > metadata - 1 ? this.children.get(metadata - 1).getValueOfNode() : 0; // On doit retirer 1 car le compteur commence à 1 et non 0 comme celui des listes
+                }
+                return sum;
+            }
         }
     }
 
@@ -61,6 +73,12 @@ public class Day8 {
     public static void exo2() throws IOException {
 
         String[] entries = ExoEntryUtils.getEntries(8, 1);
+        nodeDatas = entries[0].split(" ");
 
+        counter = 0;
+
+        Node root = searchMetadatas();
+
+        System.out.println("Value of root node : " + root.getValueOfNode());
     }
 }
