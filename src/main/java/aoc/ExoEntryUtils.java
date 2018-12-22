@@ -9,11 +9,15 @@ public class ExoEntryUtils {
 
     public static String getEntry(int day, int exo) throws IOException {
         String resourceFilename = "day" + day + "_" + exo;
-        ClassLoader classLoader = ExoEntryUtils.class.getClassLoader();
-        return FileUtils.readFileToString(new File(classLoader.getResource(resourceFilename).getFile()));
+        return FileUtils.readFileToString(getResource(resourceFilename));
     }
 
     public static String[] getEntries(int day, int exo) throws IOException {
         return getEntry(day, exo).split("\r\n");
+    }
+
+    public static File getResource(String resourceFilename) {
+        ClassLoader classLoader = ExoEntryUtils.class.getClassLoader();
+        return new File(classLoader.getResource(resourceFilename).getFile());
     }
 }

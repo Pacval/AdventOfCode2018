@@ -1,17 +1,15 @@
 package aoc;
 
-import aoc.days.*;
-
-import java.util.Arrays;
+import aoc.days.Day10;
 
 public class Main {
 
     public static void main(String[] args) {
 
         try {
-            Day9.exo2();
+            Day10.exo1();
         } catch (Exception e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            System.out.println(e);
         }
     }
 }
