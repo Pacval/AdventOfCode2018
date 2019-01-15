@@ -1,15 +1,15 @@
 package aoc.days;
 
+import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Day6 {
+public class Day6 implements DayInterface {
 
     @Getter
     @Setter
@@ -30,9 +30,9 @@ public class Day6 {
         }
     }
 
-    public static void exo1() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(6, 1);
+    @Override
+    public void part1() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(6);
 
         List<DefinedPoint> definedPoints = new ArrayList<>();
         char name = 'A';
@@ -101,14 +101,14 @@ public class Day6 {
                 .collect(Collectors.groupingBy(closestPoint -> closestPoint, Collectors.counting()));
 
         // On récupère le max
-        Map.Entry<String, Long> biggestArea = lettersOccurences.entrySet().stream().max((e1,e2) -> e1.getValue().compareTo(e2.getValue())).get();
+        Map.Entry<String, Long> biggestArea = lettersOccurences.entrySet().stream().max(Comparator.comparing(Map.Entry::getValue)).get();
         System.out.println("Letter of biggest not infinite area : " + biggestArea.getKey());
         System.out.println("Size of biggest not infinite area : " + biggestArea.getValue());
     }
 
-    public static void exo2() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(6, 1);
+    @Override
+    public void part2() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(6);
 
         List<Point> definedPoints = new ArrayList<>();
         for (String entry : entries) {
@@ -128,10 +128,10 @@ public class Day6 {
             for (int j = yMin; j <= yMax; j++) {
                 Point newPoint = new Point(i, j);
                 int totalDistance = 0;
-                for(Point definedPoint : definedPoints) {
+                for (Point definedPoint : definedPoints) {
                     totalDistance += Math.abs(newPoint.getX() - definedPoint.getX()) + Math.abs(newPoint.getY() - definedPoint.getY());
                 }
-                if(totalDistance < 10000) {
+                if (totalDistance < 10000) {
                     nbOfPointsEnoughClose++;
                 }
             }

@@ -7,8 +7,9 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            Day9.exo1();
-            Day9.exo2();
+            DayInterface day = new Day9();
+            day.part1();
+            day.part2();
         } catch (Exception e) {
             System.out.println(e);
         }

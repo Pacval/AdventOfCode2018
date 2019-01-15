@@ -1,14 +1,14 @@
 package aoc.days;
 
+import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Day8 {
+public class Day8 implements DayInterface {
 
     @Getter
     @Setter
@@ -16,16 +16,16 @@ public class Day8 {
         List<Node> children;
         List<Integer> metadatas;
 
-        Node() {
+        private Node() {
             this.children = new ArrayList<>();
             this.metadatas = new ArrayList<>();
         }
 
-        int getTotalMetadatas() {
+        private int getTotalMetadatas() {
             return metadatas.stream().mapToInt(foo -> foo).sum() + children.stream().mapToInt(Node::getTotalMetadatas).sum();
         }
 
-        int getValueOfNode() {
+        private int getValueOfNode() {
             if (this.children.isEmpty()) {
                 return this.metadatas.stream().mapToInt(foo -> foo).sum();
             } else {
@@ -41,11 +41,11 @@ public class Day8 {
     private static int counter;
     private static String[] nodeDatas;
 
-    public static void exo1() throws IOException {
+    @Override
+    public void part1() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(8);
 
-        String[] entries = ExoEntryUtils.getEntries(8, 1);
         nodeDatas = entries[0].split(" ");
-
         counter = 0;
 
         Node root = searchMetadatas();
@@ -70,13 +70,12 @@ public class Day8 {
         return node;
     }
 
-    public static void exo2() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(8, 1);
+    @Override
+    public void part2() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(8);
         nodeDatas = entries[0].split(" ");
 
         counter = 0;
-
         Node root = searchMetadatas();
 
         System.out.println("Value of root node : " + root.getValueOfNode());

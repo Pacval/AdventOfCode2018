@@ -1,5 +1,6 @@
 package aoc.days;
 
+import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Day10 {
+public class Day10 implements DayInterface {
 
     @Getter
     @Setter
@@ -39,9 +40,9 @@ public class Day10 {
         }
     }
 
-    public static void exo1() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(10, 1);
+    @Override
+    public void part1() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(10);
 
         List<Light> lights = new ArrayList<>();
 
@@ -92,8 +93,8 @@ public class Day10 {
         }
     }
 
-    public static void exo2() {
-
+    @Override
+    public void part2() throws Exception {
         // Pour l'exo 2, on a pas vraiment besoin de code : on a déjà la réponse grâce à l'exo 1
         System.out.println(10000 + 76);
     }

@@ -1,17 +1,17 @@
 package aoc.days;
 
+import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Day3 {
+public class Day3 implements DayInterface {
 
     @Getter
     @Setter
@@ -31,13 +31,13 @@ public class Day3 {
         private int line;
         private int used;
 
-        public Case(int col, int line) {
+        Case(int col, int line) {
             this.col = col;
             this.line = line;
             this.used = 0;
         }
 
-        public void addUse() {
+        void addUse() {
             this.used++;
         }
     }
@@ -49,20 +49,20 @@ public class Day3 {
         private int line;
         private List<Integer> usedBy;
 
-        public UpgradedCase(int col, int line) {
+        UpgradedCase(int col, int line) {
             this.col = col;
             this.line = line;
             usedBy = new ArrayList<>();
         }
 
-        public void addUse(int id) {
+        void addUse(int id) {
             this.usedBy.add(id);
         }
     }
 
-    public static void exo1() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(3, 1);
+    @Override
+    public void part1() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(3);
 
         // store fabrics informations
         List<Fabric> fabrics = Arrays.stream(entries).map(item -> new Fabric(
@@ -100,9 +100,9 @@ public class Day3 {
         System.out.println(casesUsedTooMuch);
     }
 
-    public static void exo2() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(3, 1);
+    @Override
+    public void part2() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(3);
 
         List<Fabric> fabrics = Arrays.stream(entries).map(item -> new Fabric(
                 Integer.parseInt(item.substring(1, item.indexOf('@') - 1)),

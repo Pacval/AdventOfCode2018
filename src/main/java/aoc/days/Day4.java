@@ -1,18 +1,17 @@
 package aoc.days;
 
+import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Day4 {
+public class Day4 implements DayInterface {
 
     @Getter
     @Setter
@@ -34,12 +33,12 @@ public class Day4 {
         private int idGuard;
         private List<Integer> minAsleep;
 
-        public Shift(int idGuard) {
+        Shift(int idGuard) {
             this.idGuard = idGuard;
             this.minAsleep = new ArrayList<>();
         }
 
-        public void addAsleep(int min) {
+        void addAsleep(int min) {
             minAsleep.add(min);
         }
     }
@@ -53,9 +52,9 @@ public class Day4 {
         private Long nbNights;
     }
 
-    public static void exo1() throws IOException, ParseException {
-
-        String[] entries = ExoEntryUtils.getEntries(4, 1);
+    @Override
+    public void part1() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(4);
 
         List<Line> lines = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -71,25 +70,27 @@ public class Day4 {
         int minStartSleeping = 0;
         Calendar cal = Calendar.getInstance();
         for (Line line : lines.stream().sorted(Comparator.comparing(Line::getDate)).collect(Collectors.toList())) {
-            if (line.getSentence().split(" ")[0].equals("Guard")) {
-                // nouveau garde
-                shift = new Shift(Integer.parseInt(line.getSentence().split(" ")[1].substring(1)));
-                shifts.add(shift);
-                minStartSleeping = 0; // 0 = nouveau garde
-
-            } else if (line.getSentence().split(" ")[0].equals("wakes")) {
-                // On se réveille
-                cal.setTime(line.getDate());
-                // On ajoute toutes les minutes endormies
-                for (int i = minStartSleeping; i < cal.get(Calendar.MINUTE); i++) {
-                    shift.addAsleep(i);
-                }
-                minStartSleeping = -1; // -1 = garde réveillé
-
-            } else if (line.getSentence().split(" ")[0].equals("falls")) {
-                // On s'endort
-                cal.setTime(line.getDate());
-                minStartSleeping = cal.get(Calendar.MINUTE);
+            switch (line.getSentence().split(" ")[0]) {
+                case "Guard":
+                    // nouveau garde
+                    shift = new Shift(Integer.parseInt(line.getSentence().split(" ")[1].substring(1)));
+                    shifts.add(shift);
+                    minStartSleeping = 0; // 0 = nouveau garde
+                    break;
+                case "wakes":
+                    // On se réveille
+                    cal.setTime(line.getDate());
+                    // On ajoute toutes les minutes endormies
+                    for (int i = minStartSleeping; i < cal.get(Calendar.MINUTE); i++) {
+                        shift.addAsleep(i);
+                    }
+                    minStartSleeping = -1; // -1 = garde réveillé
+                    break;
+                case "falls":
+                    // On s'endort
+                    cal.setTime(line.getDate());
+                    minStartSleeping = cal.get(Calendar.MINUTE);
+                    break;
             }
         }
 
@@ -98,7 +99,7 @@ public class Day4 {
         Map.Entry maxSleepingGuard = shifts.stream()
                 .collect(Collectors.groupingBy(foo -> foo.idGuard,
                         Collectors.summingInt(foo -> foo.minAsleep.size())))
-                .entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue())).get();
+                .entrySet().stream().max(Comparator.comparing(Map.Entry::getValue)).get();
 
         Integer idGuardMostSleeping = Integer.parseInt(maxSleepingGuard.getKey().toString());
 
@@ -118,9 +119,9 @@ public class Day4 {
         System.out.println(idGuardMostSleeping * minMoreSlept);
     }
 
-    public static void exo2() throws IOException, ParseException {
-
-        String[] entries = ExoEntryUtils.getEntries(4, 1);
+    @Override
+    public void part2() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(4);
 
         List<Line> lines = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");

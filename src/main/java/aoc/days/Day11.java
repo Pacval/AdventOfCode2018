@@ -1,11 +1,11 @@
 package aoc.days;
 
-import org.apache.commons.lang3.StringUtils;
+import aoc.DayInterface;
 
-public class Day11 {
+public class Day11 implements DayInterface {
 
-    public static void exo1() {
-
+    @Override
+    public void part1() throws Exception {
         int serialNumber = 9424;
 
         int[][] grid = new int[300][300];
@@ -46,8 +46,8 @@ public class Day11 {
         System.out.println("Position : " + posX + "," + posY);
     }
 
-    public static void exo2() {
-
+    @Override
+    public void part2() throws Exception {
         int serialNumber = 9424;
 
         int[][] grid = new int[300][300];

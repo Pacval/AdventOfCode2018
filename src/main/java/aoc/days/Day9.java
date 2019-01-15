@@ -1,5 +1,6 @@
 package aoc.days;
 
+import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,11 +8,11 @@ import lombok.Setter;
 import java.io.IOException;
 import java.util.*;
 
-public class Day9 {
+public class Day9 implements DayInterface {
 
-    public static void exo1() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(9, 1);
+    @Override
+    public void part1() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(9);
 
         int nbPlayer = Integer.parseInt(entries[0].split(" ")[0]);
         int lastMarble = Integer.valueOf(entries[0].split(" ")[6]);
@@ -21,12 +22,12 @@ public class Day9 {
         System.out.println("Highest score : " + play(nbPlayer, lastMarble));
     }
 
-    public static void exo2() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(9, 2);
+    @Override
+    public void part2() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(9);
 
         int nbPlayer = Integer.valueOf(entries[0].split(" ")[0]);
-        int lastMarble = Integer.valueOf(entries[0].split(" ")[6]);
+        int lastMarble = Integer.valueOf(entries[0].split(" ")[6]) * 100;
 
         System.out.println("Number of players : " + nbPlayer);
         System.out.println("Last marble value : " + lastMarble);

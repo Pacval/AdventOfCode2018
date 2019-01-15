@@ -1,5 +1,6 @@
 package aoc.days;
 
+import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,19 +13,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class Day7 {
+public class Day7 implements DayInterface {
 
     @Getter
     private static class Instruction {
         private String name;
         private List<String> instBefore;
 
-        public Instruction(String name) {
+        Instruction(String name) {
             this.name = name;
             this.instBefore = new ArrayList<>();
         }
 
-        public void insertBefore(String name) {
+        void insertBefore(String name) {
             instBefore.add(name);
         }
     }
@@ -35,29 +36,29 @@ public class Day7 {
         private int secTaskRemaining;
         private Character jobName;
 
-        public Elve() {
+        Elve() {
             this.secTaskRemaining = 0;
             this.jobName = null;
         }
 
-        public void giveWork(char jobName) {
+        void giveWork(char jobName) {
             this.jobName = jobName;
             this.secTaskRemaining = (int) jobName - 5; // 60 + (int) jobName - 64 - 1 (A = 65 -> A - 64 = 1)  - 1 car le travail commence directement
         }
 
-        public void work() {
+        void work() {
             System.out.print(jobName + "   ");
             this.secTaskRemaining--;
         }
 
-        public boolean isWorking() {
+        boolean isWorking() {
             return this.jobName != null;
         }
     }
 
-    public static void exo1() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(7, 1);
+    @Override
+    public void part1() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(7);
 
         List<Instruction> instructions = new ArrayList<>();
         for (String entry : entries) {
@@ -90,9 +91,9 @@ public class Day7 {
         }
     }
 
-    public static void exo2() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(7, 1);
+    @Override
+    public void part2() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(7);
 
         List<Instruction> instructions = new ArrayList<>();
         for (String entry : entries) {

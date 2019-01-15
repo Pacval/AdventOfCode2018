@@ -7,13 +7,13 @@ import java.io.IOException;
 
 public class ExoEntryUtils {
 
-    public static String getEntry(int day, int exo) throws IOException {
-        String resourceFilename = "day" + day + "_" + exo;
+    public static String getEntry(int day) throws IOException {
+        String resourceFilename = "day" + day;
         return FileUtils.readFileToString(getResource(resourceFilename));
     }
 
-    public static String[] getEntries(int day, int exo) throws IOException {
-        return getEntry(day, exo).split("\r\n");
+    public static String[] getEntries(int day) throws IOException {
+        return getEntry(day).split("\r\n");
     }
 
     public static File getResource(String resourceFilename) {

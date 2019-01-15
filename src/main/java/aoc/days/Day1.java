@@ -1,16 +1,16 @@
 package aoc.days;
 
+import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Day1 {
+public class Day1 implements DayInterface {
 
-    public static void exo1() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(1, 1);
+    @Override
+    public void part1() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(1);
 
         int res = 0;
 
@@ -24,9 +24,9 @@ public class Day1 {
         System.out.println(res);
     }
 
-    public static void exo2() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(1, 1);
+    @Override
+    public void part2() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(1);
 
         int res = 0;
         List<Integer> seenValues = new ArrayList<>();

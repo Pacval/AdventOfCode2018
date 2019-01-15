@@ -1,5 +1,6 @@
 package aoc.days;
 
+import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 
 import java.io.IOException;
@@ -8,12 +9,11 @@ import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Day5 {
+public class Day5 implements DayInterface {
 
-
-    public static void exo1() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(5, 1);
+    @Override
+    public void part1() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(5);
         String polymer = entries[0];
 
         boolean oppostionFound = true;
@@ -37,9 +37,9 @@ public class Day5 {
         System.out.println("Size : " + polymer.length());
     }
 
-    public static void exo2() throws IOException {
-
-        String[] entries = ExoEntryUtils.getEntries(5, 1);
+    @Override
+    public void part2() throws Exception {
+        String[] entries = ExoEntryUtils.getEntries(5);
         String polymer = entries[0];
 
         Map<Character, Integer> advancedPolymers = new HashMap<>();
