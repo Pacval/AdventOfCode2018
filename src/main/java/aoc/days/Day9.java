@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Day9 {
 
@@ -15,119 +13,71 @@ public class Day9 {
 
         String[] entries = ExoEntryUtils.getEntries(9, 1);
 
-        Integer nbPlayer = Integer.valueOf(entries[0].split(" ")[0]);
-        Integer lastMarble = Integer.valueOf(entries[0].split(" ")[6]);
+        int nbPlayer = Integer.parseInt(entries[0].split(" ")[0]);
+        int lastMarble = Integer.valueOf(entries[0].split(" ")[6]);
 
         System.out.println("Number of players : " + nbPlayer);
         System.out.println("Last marble value : " + lastMarble);
-
-        int playerTurn = 1;
-
-        int[] marbleGame = new int[]{0, 1};
-        int currentMarblePosition = 1;
-
-        // On stockes les scores dans un tableau et on met tout le monde à 0
-        int[] scores = new int[nbPlayer];
-        Arrays.fill(scores, 0);
-
-        for (int marble = 2; marble <= lastMarble; marble++) {
-
-            if(marble % 23 == 0) {
-                // récupération de la 7eme bille avant et ajout des points
-                currentMarblePosition = currentMarblePosition < 7 ? currentMarblePosition + marbleGame.length - 7 : currentMarblePosition - 7;
-
-                // ajout points 7eme bille et bille à ajouter
-                scores[playerTurn - 1] = scores[playerTurn - 1] + marble + marbleGame[currentMarblePosition];
-
-                // suppression de la bille
-                marbleGame = removeMarble(marbleGame, currentMarblePosition);
-
-            } else {
-                // recherche position nouvelle bille
-                int nextPosition = (currentMarblePosition + 2) % marbleGame.length;
-
-                // ajout bille
-                marbleGame = addMarble(marbleGame, nextPosition, marble);
-                currentMarblePosition = nextPosition;
-            }
-
-            playerTurn = playerTurn == nbPlayer ? 1 : playerTurn + 1;
-        }
-
-        int highestScore = Arrays.stream(scores).max().getAsInt();
-        System.out.println("Highest score : " + highestScore);
-    }
-
-    private static int[] addMarble(int[] marbleGame, int positionNewMarble, int valueMarble) {
-        int[] result = new int[marbleGame.length + 1];
-        System.arraycopy(marbleGame, 0, result, 0, positionNewMarble);
-        System.arraycopy(marbleGame, positionNewMarble, result, positionNewMarble + 1, result.length - positionNewMarble - 1);
-        result[positionNewMarble] = valueMarble;
-        return result;
-    }
-
-    private static int[] removeMarble(int[] marbleGame, int positionMarble) {
-        int[] result = new int[marbleGame.length - 1];
-        System.arraycopy(marbleGame, 0, result, 0, positionMarble);
-
-        // On fait ça pour éviter de faire planter quand la bille à supprimer est la dernière bille du tableau
-        if(positionMarble != marbleGame.length - 1) {
-            System.arraycopy(marbleGame, positionMarble + 1, result, positionMarble, result.length - positionMarble - 1);
-        }
-        return result;
+        System.out.println("Highest score : " + play(nbPlayer, lastMarble));
     }
 
     public static void exo2() throws IOException {
 
         String[] entries = ExoEntryUtils.getEntries(9, 2);
 
-        Integer nbPlayer = Integer.valueOf(entries[0].split(" ")[0]);
-        Integer lastMarble = Integer.valueOf(entries[0].split(" ")[6]);
+        int nbPlayer = Integer.valueOf(entries[0].split(" ")[0]);
+        int lastMarble = Integer.valueOf(entries[0].split(" ")[6]);
 
         System.out.println("Number of players : " + nbPlayer);
         System.out.println("Last marble value : " + lastMarble);
+        System.out.println("Highest score : " + play(nbPlayer, lastMarble));
+    }
 
-        // Ne marche pas : pas assez optimisé
-        /*
-        int playerTurn = 1;
+    private static long play(int nbPlayer, int lastMarble) {
 
-        int[] marbleGame = new int[]{0, 1};
-        int currentMarblePosition = 1;
+        LinkedList<Integer> marbleGame = new LinkedList<>();
+        marbleGame.add(0);
 
         // On stockes les scores dans un tableau et on met tout le monde à 0
         long[] scores = new long[nbPlayer];
         Arrays.fill(scores, 0);
 
-        for (int marble = 2; marble <= lastMarble; marble++) {
+        int playerTurn = 1;
+        ListIterator<Integer> listIterator = marbleGame.listIterator();
+
+        for (int marble = 1; marble <= lastMarble; marble++) {
 
             if(marble % 23 == 0) {
-                // récupération de la 7eme bille avant et ajout des points
-                currentMarblePosition = currentMarblePosition < 7 ? currentMarblePosition + marbleGame.length - 7 : currentMarblePosition - 7;
+
+                int valueRemoved = 0;
+                for (int i = 0; i < 8; i++) {
+                    if (listIterator.hasPrevious()) {
+                        valueRemoved = listIterator.previous();
+                    } else {
+                        listIterator = marbleGame.listIterator(marbleGame.size());
+                        valueRemoved = listIterator.previous();
+                    }
+                }
+                listIterator.remove();
+                listIterator.next();
 
                 // ajout points 7eme bille et bille à ajouter
-                scores[playerTurn - 1] = scores[playerTurn - 1] + marble + marbleGame[currentMarblePosition];
-
-                // suppression de la bille
-                marbleGame = removeMarble(marbleGame, currentMarblePosition);
+                scores[playerTurn - 1] = scores[playerTurn - 1] + marble + valueRemoved;
 
             } else {
-                // recherche position nouvelle bille
-                int nextPosition = (currentMarblePosition + 2) % marbleGame.length;
 
-                // ajout bille
-                marbleGame = addMarble(marbleGame, nextPosition, marble);
-                currentMarblePosition = nextPosition;
+                if (listIterator.hasNext()) {
+                    listIterator.next();
+                } else {
+                    listIterator = marbleGame.listIterator();
+                    listIterator.next();
+                }
+                listIterator.add(marble);
             }
 
             playerTurn = playerTurn == nbPlayer ? 1 : playerTurn + 1;
-
-            if (marble % 10000 == 0) {
-                System.out.println(marble);
-            }
         }
 
-        long highestScore = Arrays.stream(scores).max().getAsLong();
-        System.out.println("Highest score : " + highestScore);
-        */
+        return Arrays.stream(scores).max().getAsLong();
     }
 }

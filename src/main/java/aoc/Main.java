@@ -1,13 +1,14 @@
 package aoc;
 
-import aoc.days.Day12;
+import aoc.days.Day9;
 
 public class Main {
 
     public static void main(String[] args) {
 
         try {
-            Day12.exo2();
+            Day9.exo1();
+            Day9.exo2();
         } catch (Exception e) {
             System.out.println(e);
         }
