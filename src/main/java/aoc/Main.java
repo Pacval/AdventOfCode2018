@@ -8,7 +8,7 @@ public class Main {
 
         try {
             DayInterface day = new Day12();
-            day.part1();
+            //day.part1();
             day.part2();
         } catch (Exception e) {
             System.out.println(e);

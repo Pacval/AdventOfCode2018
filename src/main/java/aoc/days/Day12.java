@@ -57,7 +57,7 @@ public class Day12 implements DayInterface {
         System.out.println("Total points of pots on " + nbGenerations + " generations : " + generate(nbGenerations, state, spreads));
     }
 
-    private int generate(long nbGenerations, String state, List<Spread> spreads) {
+    private long generate(long nbGenerations, String state, List<Spread> spreads) {
         long farestLeft = 0, previousFarestLeft = 0;
         long age = 0;
 
@@ -100,13 +100,15 @@ public class Day12 implements DayInterface {
                 previousFarestLeft = farestLeft;
                 age++;
             }
+
+            System.out.println(StringUtils.rightPad(String.valueOf(farestLeft), 10) + state);
         }
 
-        System.out.println("Final state after " + nbGenerations + " years : " + state);
+        System.out.println("\n\n\nFinal state after " + nbGenerations + " years : " + state);
 
         // Calcul du total des numéros de pot
         long potValue = farestLeft;
-        int totalPots = 0;
+        long totalPots = 0;
         for (char c : state.toCharArray()) {
             if (c == '#') {
                 totalPots += potValue;
