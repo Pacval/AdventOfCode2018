@@ -100,8 +100,6 @@ public class Day12 implements DayInterface {
                 previousFarestLeft = farestLeft;
                 age++;
             }
-
-            System.out.println(StringUtils.rightPad(String.valueOf(farestLeft), 10) + state);
         }
 
         System.out.println("\n\n\nFinal state after " + nbGenerations + " years : " + state);
