@@ -2,11 +2,10 @@ package aoc.days;
 
 import aoc.DayInterface;
 import aoc.ExoEntryUtils;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 public class Day9 implements DayInterface {
 

@@ -3,9 +3,6 @@ package aoc.days;
 import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 
-import java.io.IOException;
-import java.nio.charset.CharacterCodingException;
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 

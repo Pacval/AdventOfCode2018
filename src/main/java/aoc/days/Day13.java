@@ -24,14 +24,14 @@ public class Day13 implements DayInterface {
     }
 
     @AllArgsConstructor
-    private class Position {
+    private static class Position {
         int x;
         int y;
     }
 
     @AllArgsConstructor
     @Data
-    private class Cart {
+    private static class Cart {
         int id;
         int x;
         int y;
@@ -58,7 +58,7 @@ public class Day13 implements DayInterface {
 
     @EqualsAndHashCode(callSuper = true)
     @Data
-    private class CartExo2 extends Cart {
+    private static class CartExo2 extends Cart {
         int moves;
 
         CartExo2(int id, int x, int y, Direction direction, int nbCross) {
