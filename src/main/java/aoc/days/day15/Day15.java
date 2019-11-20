@@ -6,6 +6,7 @@ import aoc.ExoEntryUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Day15 implements DayInterface {
 
@@ -16,6 +17,7 @@ public class Day15 implements DayInterface {
         List<Unit> units = new ArrayList<>();
         List<Wall> walls = new ArrayList<>();
 
+        // lecture entrée
         for (int i = 0; i < entries.length; i++) {
             for (int j = 0; j < entries[i].length(); j++) {
                 switch (entries[i].charAt(j)) {
@@ -31,6 +33,7 @@ public class Day15 implements DayInterface {
             }
         }
 
+        // comparateur unité pour savoir qui bouge ensuite
         Comparator<Unit> unitComparator = (o1, o2) -> {
             if (o1.getTurns() < o2.getTurns()) {
                 return -1;
@@ -47,18 +50,22 @@ public class Day15 implements DayInterface {
             }
         };
 
-        mainloop:
+        mainLoop:
         while (true) {
 
             // on ordonne les unités
             units.sort(unitComparator);
 
-            Unit unitToMove = units.get(0);
+            units.get(0).doTurn(units, walls);
+
 
             // condition de sortie
             if (units.stream().map(Unit::getType).distinct().count() <= 1) {
-                break mainloop;
+                break mainLoop;
             }
+
+            // tri des unités vivantes
+            units = units.stream().filter(unit -> unit.getHealth() > 0).collect(Collectors.toList());
         }
 
 
