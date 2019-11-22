@@ -1,13 +1,13 @@
 package aoc;
 
-import aoc.days.day15.Day15;
+import aoc.days.Day16;
 
 public class Main {
 
     public static void main(String[] args) {
 
         try {
-            DayInterface day = new Day15();
+            DayInterface day = new Day16();
             day.part1();
             day.part2();
         } catch (Exception e) {
