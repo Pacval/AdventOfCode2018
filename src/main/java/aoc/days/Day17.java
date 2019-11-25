@@ -4,22 +4,65 @@ import aoc.DayInterface;
 import aoc.ExoEntryUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.omg.PortableInterceptor.INACTIVE;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day17 implements DayInterface {
 
+    private Set<Position> filledSquares;
+
+    private int xMin;
+    private int xMax;
+    private int yMin;
+    private int yMax;
+
     @AllArgsConstructor
     @Data
-    private static class Water {
-        String position; // format : "x.y"
-        boolean isBlocked;
+    private class Position {
+        int x;
+        int y;
+    }
+
+    @AllArgsConstructor
+    private class Water {
+        int x;
+        int y;
+
+        int flow() {
+
+            // si on passse en dessous de la dernière ligne comptée, on retourne direct
+            if (y > yMax) {
+                return 0;
+            }
+
+            int score = 0;
+
+            // si case en dessous vide, on ajoute de l'eau
+            if (!filledSquares.contains(new Position(x, y + 1))) {
+                Water childDown = new Water(x, y + 1);
+                score += childDown.flow();
+            }
+
+            // aller sur les cotés. Mais condition de sortie ?
+            if (!filledSquares.contains(new Position(x - 1, y))) {
+                Water childLeft = new Water(x - 1, y);
+                score += childLeft.flow();
+            }
+
+            if (!filledSquares.contains(new Position(x + 1, y))) {
+                Water childRight = new Water(x + 1, y);
+                score += childRight.flow();
+            }
+
+            // si case dans zone de score, on comptabilise
+            if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
+                score++;
+            }
+            return score;
+        }
     }
 
     @Override
@@ -28,14 +71,14 @@ public class Day17 implements DayInterface {
 
         Pattern pattern = Pattern.compile("(.)=(\\d*), .=(\\d*)..(\\d*)");
 
-        Set<String> clays = new HashSet<>(); // format x.y
+        // on va faire qu'une seule liste qui servira à stocker les positions impossible à remplir (clay + déjà remplies d'eau)
+        filledSquares = new HashSet<>(); // format x.y
 
-        int xMin = Integer.MAX_VALUE;
-        int xMax = Integer.MIN_VALUE;
-        int yMin = Integer.MAX_VALUE;
-        int yMax = Integer.MIN_VALUE;
+        xMin = Integer.MAX_VALUE;
+        xMax = Integer.MIN_VALUE;
+        yMin = Integer.MAX_VALUE;
+        yMax = Integer.MIN_VALUE;
 
-        // on va lister tous les carrés de clay (entries)
         for (String line : entries) {
             Matcher matcher = pattern.matcher(line);
             if (!matcher.find()) {
@@ -44,22 +87,20 @@ public class Day17 implements DayInterface {
             if (matcher.group(1).equals("x")) {
                 int x = Integer.parseInt(matcher.group(2));
                 for (int y = Integer.parseInt(matcher.group(3)); y <= Integer.parseInt(matcher.group(4)); y++) {
-                    String pos = x + "." + y;
                     xMin = Math.min(x, xMin);
                     xMax = Math.max(x, xMax);
                     yMin = Math.min(y, yMin);
                     yMax = Math.max(y, yMax);
-                    clays.add(pos);
+                    filledSquares.add(new Position(x, y));
                 }
             } else if (matcher.group(1).equals("y")) {
                 int y = Integer.parseInt(matcher.group(2));
                 for (int x = Integer.parseInt(matcher.group(3)); x <= Integer.parseInt(matcher.group(4)); x++) {
-                    String pos = x + "." + y;
                     xMin = Math.min(x, xMin);
                     xMax = Math.max(x, xMax);
                     yMin = Math.min(y, yMin);
                     yMax = Math.max(y, yMax);
-                    clays.add(pos);
+                    filledSquares.add(new Position(x, y));
                 }
             } else {
                 System.out.println("Error : " + line);
@@ -76,12 +117,10 @@ public class Day17 implements DayInterface {
             }
         }*/
 
-        List<Water> water = new ArrayList<>();
-        water.add(new Water(500 + "." + 0, false));
+        Water start = new Water(500, 0);
+        int nbSquareFlowded = start.flow();
 
-        while (!water.stream().allMatch(Water::isBlocked)) {
-
-        }
+        System.out.println();
 
     }
 
