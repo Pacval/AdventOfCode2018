@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class Day10 implements DayInterface {
 
     @Getter
@@ -33,9 +34,9 @@ public class Day10 implements DayInterface {
     private static int getValue(String str) {
         String strTrimed = str.replaceAll(" ", "");
         if (strTrimed.charAt(0) == '-') {
-            return Integer.valueOf(strTrimed.substring(1)) * -1;
+            return Integer.parseInt(strTrimed.substring(1)) * -1;
         } else {
-            return Integer.valueOf(strTrimed);
+            return Integer.parseInt(strTrimed);
         }
     }
 
