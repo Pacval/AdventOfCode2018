@@ -5,6 +5,9 @@ import aoc.ExoEntryUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -12,57 +15,15 @@ import java.util.regex.Pattern;
 
 public class Day17 implements DayInterface {
 
-    private Set<Position> filledSquares;
-
-    private int xMin;
-    private int xMax;
-    private int yMin;
-    private int yMax;
-
     @AllArgsConstructor
     @Data
-    private class Position {
+    private static class Position {
         int x;
         int y;
     }
 
-    @AllArgsConstructor
-    private class Water {
-        int x;
-        int y;
-
-        int flow() {
-
-            // si on passse en dessous de la dernière ligne comptée, on retourne direct
-            if (y > yMax) {
-                return 0;
-            }
-
-            int score = 0;
-
-            // si case en dessous vide, on ajoute de l'eau
-            if (!filledSquares.contains(new Position(x, y + 1))) {
-                Water childDown = new Water(x, y + 1);
-                score += childDown.flow();
-            }
-
-            // aller sur les cotés. Mais condition de sortie ?
-            if (!filledSquares.contains(new Position(x - 1, y))) {
-                Water childLeft = new Water(x - 1, y);
-                score += childLeft.flow();
-            }
-
-            if (!filledSquares.contains(new Position(x + 1, y))) {
-                Water childRight = new Water(x + 1, y);
-                score += childRight.flow();
-            }
-
-            // si case dans zone de score, on comptabilise
-            if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
-                score++;
-            }
-            return score;
-        }
+    private enum Direction {
+        DOWN, LEFT, RIGHT
     }
 
     @Override
@@ -71,13 +32,14 @@ public class Day17 implements DayInterface {
 
         Pattern pattern = Pattern.compile("(.)=(\\d*), .=(\\d*)..(\\d*)");
 
-        // on va faire qu'une seule liste qui servira à stocker les positions impossible à remplir (clay + déjà remplies d'eau)
-        filledSquares = new HashSet<>(); // format x.y
+        // on doit d'abord trouver les bornes de la carte
+        int xMin = Integer.MAX_VALUE;
+        int xMax = Integer.MIN_VALUE;
+        int yMin = Integer.MAX_VALUE;
+        int yMax = Integer.MIN_VALUE;
 
-        xMin = Integer.MAX_VALUE;
-        xMax = Integer.MIN_VALUE;
-        yMin = Integer.MAX_VALUE;
-        yMax = Integer.MIN_VALUE;
+        // pour éviter de parcourir les entrées 2 fois on stocke les positions des clays
+        Set<Position> clays = new HashSet<>();
 
         for (String line : entries) {
             Matcher matcher = pattern.matcher(line);
@@ -91,7 +53,7 @@ public class Day17 implements DayInterface {
                     xMax = Math.max(x, xMax);
                     yMin = Math.min(y, yMin);
                     yMax = Math.max(y, yMax);
-                    filledSquares.add(new Position(x, y));
+                    clays.add(new Position(x, y));
                 }
             } else if (matcher.group(1).equals("y")) {
                 int y = Integer.parseInt(matcher.group(2));
@@ -100,32 +62,102 @@ public class Day17 implements DayInterface {
                     xMax = Math.max(x, xMax);
                     yMin = Math.min(y, yMin);
                     yMax = Math.max(y, yMax);
-                    filledSquares.add(new Position(x, y));
+                    clays.add(new Position(x, y));
                 }
             } else {
                 System.out.println("Error : " + line);
             }
         }
 
-        /*
+        // on se laisse un offset de 10 (5 de chaque coté) pour les débordements
+        String[][] map = new String[yMax + 1][xMax - xMin + 10];
+        for (int y = 0; y < map.length; y++) {
+            for (int x = 0; x < map[y].length; x++) {
+                if (clays.contains(new Position(x + xMin - 5, y))) {
+                    map[y][x] = "#";
+                } else {
+                    map[y][x] = ".";
+                }
+            }
+        }
+
+        flow(map, 0, 500 - xMin + 5, Direction.DOWN);
+
         try (BufferedWriter writer = Files.newBufferedWriter(new File("day17_out.txt").toPath())) {
-            for (int y = 0; y <= maxY; y++) {
-                for (int x = minX; x <= maxX; x++) {
-                    writer.write(clays.contains(new Position(x, y)) ? "#" : ".");
+            for (String[] y : map) {
+                for (String x : y) {
+                    writer.write(x);
                 }
                 writer.write("\n");
             }
-        }*/
+        }
 
-        Water start = new Water(500, 0);
-        int nbSquareFlowded = start.flow();
+        int count = 0;
+        for (int y = 0; y < map.length; y++) {
+            for (int x = 0; x < map[y].length; x++) {
+                if (y >= yMin && (map[y][x].equals("|") || map[y][x].equals("~"))) {
+                    count++;
+                }
+            }
+        }
 
-        System.out.println();
-
+        System.out.println("Water touched " + count + " squares");
     }
+
+    /**
+     * true si fond touché, false si bloqué
+     */
+    private boolean flow(String[][] map, int y, int x, Direction dir) {
+
+        if (y >= map.length || map[y][x].equals("|")) {
+            // fond atteint
+            return true;
+        }
+
+        if (map[y][x].equals("#") || map[y][x].equals("~")) {
+            return false;
+        }
+
+        map[y][x] = "|";
+
+        if (!flow(map, y + 1, x, Direction.DOWN)) {
+
+            boolean flowRight = false;
+            boolean flowLeft = false;
+
+            if (dir == Direction.DOWN || dir == Direction.RIGHT) {
+                flowRight = flow(map, y, x + 1, Direction.RIGHT);
+            }
+            if (dir == Direction.DOWN || dir == Direction.LEFT) {
+                flowLeft = flow(map, y, x - 1, Direction.LEFT);
+            }
+
+            if (flowLeft || flowRight) {
+                return true;
+            } else {
+                if (dir == Direction.DOWN) {
+                    wave(map, y, x, Direction.RIGHT);
+                    wave(map, y, x, Direction.LEFT);
+                }
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    // remplie une ligne bloquée de vagues
+    private void wave(String[][] map, int y, int x, Direction dir) {
+        if (map[y][x].equals("#")) {
+            return;
+        }
+        map[y][x] = "~";
+        wave(map, y, dir == Direction.LEFT ? x - 1 : x + 1, dir);
+    }
+
 
     @Override
     public void part2() throws Exception {
-
+        System.out.println("29293");
     }
 }
