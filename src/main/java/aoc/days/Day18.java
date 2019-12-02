@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 public class Day18 implements DayInterface {
 
     private enum Type {
-        OPEN, TREES, LUMBERYARD;
+        OPEN, TREES, LUMBERYARD
     }
 
     @AllArgsConstructor
     @Data
-    private static class Acre {
+    public static class Acre {
         int x;
         int y;
         Type type;
@@ -127,16 +127,13 @@ public class Day18 implements DayInterface {
 
             if (history.containsKey(area)) {
                 int repetition = i - history.get(area);
-                int j = i;
-                while (j < 1000000000) {
-                    j += repetition;
-                }
-                int offset = repetition - (j - 1000000000);
+                int offset = (1000000000 - i) % repetition;
 
                 int iResult = history.get(area) + offset;
 
-                result = history.entrySet().stream().filter(item -> item.getValue() == iResult).findFirst().get().getKey()
-                        .stream().filter(item -> item.getType() == Type.TREES).count() * area.stream().filter(item -> item.getType() == Type.LUMBERYARD).count();
+                List<Acre> acreResult = history.entrySet().stream().filter(item -> item.getValue() == iResult).findFirst().get().getKey();
+
+                result = acreResult.stream().filter(item -> item.getType() == Type.TREES).count() * acreResult.stream().filter(item -> item.getType() == Type.LUMBERYARD).count();
 
                 break;
 
